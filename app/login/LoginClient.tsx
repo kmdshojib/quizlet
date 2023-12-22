@@ -1,17 +1,42 @@
 "use client";
 import Link from "next/link";
-import React from "react";
+import React, { useCallback } from "react";
 import { useForm, FieldValues, SubmitHandler } from "react-hook-form";
+import { UseAppDispatch } from "../Hooks/useRedux";
+import { useLoginUserMutation } from "@/redux/Services/authService";
+import { setUser } from "@/redux/features/authSlice";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 const LoginClient: React.FC = () => {
+  const dispatch = UseAppDispatch();
+  const [loginMutation, { isLoading }] = useLoginUserMutation();
+  const router = useRouter()
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FieldValues>();
-  const handleLogin: SubmitHandler<FieldValues> = (data: FieldValues) => {
-    console.log(data);
-  };
+
+  const handleLogin: SubmitHandler<FieldValues> = useCallback(
+    async (data: FieldValues) => {
+      try {
+        const result = await loginMutation(data);
+
+        if ("data" in result) {
+          dispatch(setUser(result.data));
+          toast.success("User Logged in successfully");
+          router.push("/");
+        } else {
+          toast.error("Login Failed: Check your email or password!");
+        }
+      } catch (error) {
+        console.error("Login Error:", error);
+        toast.error("An unexpected error occurred. Please try again later.");
+      }
+    },
+    [dispatch, router, loginMutation]
+  );
   return (
     <div className="flex flex-col w-[360px] md:w-[450px] p-6 rounded-md sm:p-10 bg-gray-50 shadow-xl">
       <div className="mb-8 text-center">
