@@ -1,17 +1,33 @@
 "use client";
+import { useRegisterUserMutation } from "@/redux/Services/authService";
 import Link from "next/link";
-import React from "react";
+import { useRouter } from "next/navigation";
+import React, { useCallback } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 
 const RegisterClient = () => {
+  const [resgisterUser, { isLoading }] = useRegisterUserMutation();
+  const router = useRouter();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FieldValues>();
-  const handleRegister: SubmitHandler<FieldValues> = (data: FieldValues) => {
-    console.log(data);
-  };
+  const handleRegister: SubmitHandler<FieldValues> = useCallback(
+    async (data: FieldValues) => {
+      try {
+        const result = await resgisterUser(data);
+        if ("data" in result) {
+          toast.success("User Successfully registered");
+          router.push("/login");
+        }
+      } catch (error: any) {
+        toast.error(error?.message);
+      }
+    },
+    [resgisterUser, router]
+  );
   return (
     <div className="flex flex-col w-[360px] md:w-[450px] p-6 rounded-md sm:p-10 bg-gray-50 shadow-xl">
       <div className="mb-8 text-center">
@@ -84,7 +100,7 @@ const RegisterClient = () => {
               className="w-full px-8 py-3 font-semibold rounded-md bg-rose-500 text-base-200"
               type="submit"
             >
-            Register
+              Register
             </button>
           </div>
           <p className="px-6 text-sm text-center text-gray-600">

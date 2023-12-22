@@ -1,3 +1,4 @@
+
 import { apiService } from "../api/api";
 
 export const authService = apiService.injectEndpoints({
@@ -8,8 +9,15 @@ export const authService = apiService.injectEndpoints({
                 method: "POST",
                 data: credentials,
             }),
+        }),
+        registerUser: build.mutation<any, any>({
+            query: (data) => ({
+                url: "user/register",
+                method: "POST",
+                data: data,
+            })
         })
     })
 })
 
-export const { useLoginUserMutation } = authService;
+export const { useLoginUserMutation, useRegisterUserMutation } = authService;
