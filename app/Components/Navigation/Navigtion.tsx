@@ -27,7 +27,7 @@ const Navigtion = () => {
                   {/* Hide Cart and Categories on small screens */}
                 </div>
                 <div className="hidden sm:block">{/* <Categories /> */}</div>
-                <div className="w-28 flex justify-between">
+                <div className="hidden w-28 md:flex justify-between">
                   {auth.user ? (
                     <div
                       onClick={handleLogout}
