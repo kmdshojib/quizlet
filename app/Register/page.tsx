@@ -1,13 +1,14 @@
-import React from "react";
-import RegisterClient from "./RegisterClient";
 import { Metadata } from "next";
+import React from "react";
+// import RegisterClient from "./RegisterClient";
 export const metadata: Metadata = {
   title: "Quizlet | Register",
 };
 const Register = () => {
   return (
     <div className="flex justify-center">
-      <RegisterClient />
+      {/* <RegisterClient /> */}
+      <div>Hello</div>
     </div>
   );
 };
