@@ -4,7 +4,7 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Quizlet | Register",
 };
-const page = () => {
+const Register = () => {
   return (
     <div className="flex justify-center">
       <RegisterClient />
@@ -12,4 +12,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Register;
