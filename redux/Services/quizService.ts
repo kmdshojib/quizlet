@@ -5,6 +5,9 @@ export const quizService = apiService.injectEndpoints({
         getQuizCategory: build.query<null, null>({
             query: () => ({ method: "GET", url: "quiz/getQuizes" }),
         }),
+        getQuizById: build.query<null, any>({
+            query: (id:any) => ({ method: "GET", url: `quiz/getQuizes/${id}` })
+        })
     })
 })
-export const { useGetQuizCategoryQuery } = quizService
+export const { useGetQuizCategoryQuery,useGetQuizByIdQuery } = quizService
