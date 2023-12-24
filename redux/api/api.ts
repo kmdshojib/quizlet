@@ -7,7 +7,7 @@ const axiosBaseQuery = (): BaseQueryFn<AxiosRequestConfig, unknown, AxiosError> 
     //   ? "https://quizlet-backend-phi.vercel.app/api/"
     //   : "http://localhost:5000/api/";
 
-    Axios.defaults.baseURL = "https://quizlet-backend-phi.vercel.app/api";
+    Axios.defaults.baseURL = "https://quizlet-backend-phi.vercel.app/api/";
 
     const axiosConfig: AxiosRequestConfig = {
       url,
