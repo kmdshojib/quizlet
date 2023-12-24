@@ -8,6 +8,7 @@ import { usePostScoresMutation } from "@/redux/Services/authService";
 import { useAppSelector } from "@/app/Hooks/useRedux";
 import { toast } from "react-toastify";
 import { shuffle } from "lodash";
+import Spinner from "@/app/Components/Common/Spinner";
 
 const QuizPage = () => {
   const { id } = useParams();
@@ -109,7 +110,9 @@ const QuizPage = () => {
   return (
     <div>
       {isLoading ? (
-        <div>Loading...</div>
+        <div>
+          <Spinner />
+        </div>
       ) : (
         <Container>
           <div>
