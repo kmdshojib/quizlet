@@ -8,11 +8,17 @@ const LeaderBoardClient: React.FC = () => {
   const { data, isLoading, refetch } = useGetAllUserSCoreQuery(null);
 
   const calculateAverage = (scores: any) => {
-    const totalScore = scores.reduce(
-      (sum: any, score: any) => sum + parseFloat(score.js),
-      0
-    );
-    return (totalScore / scores.length).toFixed(2);
+    const totalScore = scores.reduce((sum: any, score: any) => {
+      Object.keys(score).forEach((key) => {
+        const value = parseFloat(score[key]);
+        if (!isNaN(value)) {
+          sum += value;
+        }
+      });
+      return sum;
+    }, 0);
+    const average = totalScore / scores.length;
+    return isNaN(average) ? 0 : average.toFixed(2);
   };
 
   useEffect(() => {
@@ -38,7 +44,7 @@ const LeaderBoardClient: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {data.map((item: any, index:any) => (
+                {data.map((item: any, index: any) => (
                   <tr className="hover" key={item.id}>
                     <td>{index + 1}</td>
                     <td>{item.fullName}</td>
