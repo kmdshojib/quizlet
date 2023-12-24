@@ -25,8 +25,8 @@ const QuizPage = () => {
   const [postScoresData, setPostScoresData] = useState<any | null>(null);
   const [postScores, { isLoading: scoresLoading }] = usePostScoresMutation();
 
-  const randomizedQuestions = shuffle(data?.questions);
-  const paginatedQuestions = randomizedQuestions.slice(
+  // const randomizedQuestions = shuffle(data?.questions);
+  const paginatedQuestions = data?.questions.slice(
     (currentPage - 1) * limit,
     currentPage * limit
   );
