@@ -65,7 +65,7 @@ const QuizPage = () => {
       ) : (
         <Container>
           <div>
-            <p className="text-center font-semibold text-lg">
+            <p className="font-semibold text-lg">
               Quiz For: {data.category}
             </p>
             <form onSubmit={handleSubmit(handleAnswer)}>

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import React, { useCallback } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import Spinner from "../Components/Common/Spinner";
 
 const RegisterClient = () => {
   const [resgisterUser, { isLoading }] = useRegisterUserMutation();
@@ -28,6 +29,9 @@ const RegisterClient = () => {
     },
     [resgisterUser, router]
   );
+  if(isLoading){
+    return <Spinner />
+  }
   return (
     <div className="flex flex-col w-[360px] md:w-[450px] p-6 rounded-md sm:p-10 bg-gray-50 shadow-xl">
       <div className="mb-8 text-center">

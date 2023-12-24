@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { useGetQuizCategoryQuery } from "@/redux/Services/quizService";
 import Card from "../Common/Card";
 interface QuizDataProps {
@@ -8,8 +8,11 @@ interface QuizDataProps {
   imageUrl: string;
 }
 const HomeCilent: React.FC = () => {
-  const { data, isLoading } = useGetQuizCategoryQuery(null);
+  const { data, isLoading, refetch } = useGetQuizCategoryQuery(null);
   const quizData: QuizDataProps[] | null | undefined | any = data;
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
   return (
     <div>
       {isLoading ? (
@@ -19,7 +22,11 @@ const HomeCilent: React.FC = () => {
           {quizData?.map((item: any) => {
             return (
               <div key={item.id}>
-                <Card id={item.id} name={item.category} imageUrl={item.imageUrl}/>
+                <Card
+                  id={item.id}
+                  name={item.category}
+                  imageUrl={item.imageUrl}
+                />
               </div>
             );
           })}

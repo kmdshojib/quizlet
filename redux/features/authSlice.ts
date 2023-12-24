@@ -4,7 +4,7 @@ export interface IUser {
     user: {
         fullName: string | null;
         email: string | null;
-        // role: string | null;
+        role: string | null;
     } | null;
 }
 
@@ -12,7 +12,7 @@ const initialState: IUser = {
     user: {
         fullName: null,
         email: null,
-        // role: null,
+        role: null,
     } || null
 };
 

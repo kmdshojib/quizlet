@@ -7,6 +7,7 @@ import { useLoginUserMutation } from "@/redux/Services/authService";
 import { setUser } from "@/redux/features/authSlice";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import Spinner from '../Components/Common/Spinner';
 
 const LoginClient: React.FC = () => {
   const dispatch = UseAppDispatch();
@@ -37,6 +38,9 @@ const LoginClient: React.FC = () => {
     },
     [dispatch, router, loginMutation]
   );
+  if(isLoading){
+    return <Spinner />
+  }
   return (
     <div className="flex flex-col w-[360px] md:w-[450px] p-6 rounded-md sm:p-10 bg-gray-50 shadow-xl">
       <div className="mb-8 text-center">

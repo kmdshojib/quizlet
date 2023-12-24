@@ -1,9 +1,13 @@
-import React from 'react'
+import React from "react";
+import DashboardClient from "./DashboardClient";
+
 
 const page = () => {
   return (
-    <div>page</div>
-  )
-}
+    <div>
+      <DashboardClient />
+    </div>
+  );
+};
 
-export default page
+export default page;
