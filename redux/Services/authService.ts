@@ -16,8 +16,21 @@ export const authService = apiService.injectEndpoints({
                 method: "POST",
                 data: data,
             })
+        }),
+        postScores: build.mutation<any, any>({
+            query: (data) => ({
+                url: "user/scores",
+                method: "POST",
+                data: data,
+            })
+        }),
+        getUserScore: build.query<any, any>({
+            query: (email) => ({ method: "GET", url: `user/userScore/${email}` })
+        }),
+        getAllUserSCore: build.query<any, any>({
+            query: () => ({ method: "GET", url: "user/allUserScore" })
         })
     })
 })
 
-export const { useLoginUserMutation, useRegisterUserMutation } = authService;
+export const { useLoginUserMutation, useRegisterUserMutation, usePostScoresMutation, useGetUserScoreQuery, useGetAllUserSCoreQuery } = authService;

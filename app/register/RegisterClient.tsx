@@ -17,8 +17,15 @@ const RegisterClient = () => {
   } = useForm<FieldValues>();
   const handleRegister: SubmitHandler<FieldValues> = useCallback(
     async (data: FieldValues) => {
+      const { fullName, email, password } = data;
+      const submitData = {
+        fullName,
+        email,
+        password,
+        role: "user",
+      };
       try {
-        const result = await resgisterUser(data);
+        const result = await resgisterUser(submitData);
         if ("data" in result) {
           toast.success("User Successfully registered");
           router.push("/login");
@@ -29,8 +36,8 @@ const RegisterClient = () => {
     },
     [resgisterUser, router]
   );
-  if(isLoading){
-    return <Spinner />
+  if (isLoading) {
+    return <Spinner />;
   }
   return (
     <div className="flex flex-col w-[360px] md:w-[450px] p-6 rounded-md sm:p-10 bg-gray-50 shadow-xl">
@@ -59,8 +66,8 @@ const RegisterClient = () => {
                 errors.fullName ? "border-rose-500" : "dark:border-gray-700"
               }`}
             />
-            {errors.email && (
-              <span className="text-rose-500">Email is required!</span>
+            {errors.fullName && (
+              <span className="text-rose-500">Name is required!</span>
             )}
           </div>
           <div>

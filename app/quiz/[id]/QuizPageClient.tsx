@@ -4,14 +4,25 @@ import { useParams } from "next/navigation";
 import { useGetQuizByIdQuery } from "@/redux/Services/quizService";
 import Container from "@/app/Components/Common/Container";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { usePostScoresMutation } from "@/redux/Services/authService";
+import { useAppSelector } from "@/app/Hooks/useRedux";
+import { toast } from "react-toastify";
+import { shuffle } from "lodash";
 
 const QuizPage = () => {
   const { id } = useParams();
   const { data, isLoading }: any = useGetQuizByIdQuery(id);
+  const [score, setScore] = useState<string | null | undefined>();
+  const { user }: any = useAppSelector((state) => state.auth);
+  const [showScore, setShowScore] = useState<boolean>(false);
+  const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
+
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [answeredQuestions, setAnsweredQuestions] = useState<FieldValues>({});
   const [correctAnswer, setCorrectAnswer] = useState<boolean>(false);
   const [limit, setLimit] = useState(10);
+  const [postScoresData, setPostScoresData] = useState<any | null>(null);
+  const [postScores, { isLoading: scoresLoading }] = usePostScoresMutation();
   const paginatedQuestions = data?.questions.slice(
     (currentPage - 1) * limit,
     currentPage * limit
@@ -21,10 +32,10 @@ const QuizPage = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<FieldValues>();
-  
+
   const calculateScore = useCallback(() => {
     let correctAnswers = 0;
-  
+
     data.questions.forEach((question: any) => {
       const userAnswer = answeredQuestions[question.id];
       console.log({ userAnswer });
@@ -33,26 +44,61 @@ const QuizPage = () => {
         correctAnswers++;
       }
     });
-  
+
     const score = (correctAnswers / data.questions.length) * 100;
-    console.log("Your score:", score.toFixed(2));
+    setScore(score.toFixed(2));
   }, [answeredQuestions, data?.questions]);
   const handleAnswer: SubmitHandler<FieldValues> = useCallback(
-    async (answereData) => {
-      setAnsweredQuestions(answereData);
-      paginatedQuestions.forEach((question: any) => {
-        const selectedAnswer = answeredQuestions[question.id];
-        const isCorrect = selectedAnswer === question.correctAnswer;
-        question.options.forEach((option: any) => {
-          const isOptionSelected = option === selectedAnswer;
-          if (isOptionSelected) {
-            setCorrectAnswer(isCorrect);
+    async (answerData) => {
+      setAnsweredQuestions((prevAnsweredQuestions) => {
+        const updatedAnsweredQuestions = {
+          ...prevAnsweredQuestions,
+          ...answerData,
+        };
+
+        let correctAnswers = 0;
+        data.questions.forEach((question: any) => {
+          const userAnswer = updatedAnsweredQuestions[question.id];
+          if (userAnswer === question.correctAnswer) {
+            correctAnswers++;
           }
         });
+
+        const calculatedScore = (correctAnswers / data.questions.length) * 100;
+        setScore(calculatedScore.toFixed(2));
+
+        // Trigger the asynchronous operation
+        setPostScoresData({
+          fullName: user?.name,
+          userId: user?.id,
+          scores: {
+            [data?.category]: calculatedScore.toFixed(2),
+          },
+        });
+
+        return updatedAnsweredQuestions;
       });
+
+      setShowScore(true);
+      setHasSubmitted(true);
     },
-    [answeredQuestions, paginatedQuestions]
+    [setAnsweredQuestions, data, user]
   );
+  useEffect(() => {
+    const postScoresDataAsync = async () => {
+      if (postScoresData) {
+        const result = await postScores(postScoresData);
+        if ("success" in result) {
+          toast.success("Result has been saved successfully!");
+        }
+      }
+    };
+
+    postScoresDataAsync();
+  }, [postScoresData, postScores]);
+  useEffect(() => {
+    toast.success(score);
+  }, [score]);
   useEffect(() => {
     if (Object.keys(answeredQuestions).length > 0) {
       calculateScore();
@@ -65,9 +111,15 @@ const QuizPage = () => {
       ) : (
         <Container>
           <div>
-            <p className="font-semibold text-lg">
-              Quiz For: {data.category}
-            </p>
+            <div className="flex justify-between">
+              <p className="font-semibold text-lg">
+                {" "}
+                Quiz For: {data.category}{" "}
+              </p>
+              <p className="font-semibold text-green-700">
+                {showScore && `Your Score:${score}%`}
+              </p>
+            </div>
             <form onSubmit={handleSubmit(handleAnswer)}>
               {paginatedQuestions.map((quiz: any, index: number) => {
                 return (
@@ -98,7 +150,7 @@ const QuizPage = () => {
                           />
                           <label
                             htmlFor={option}
-                            className={`ml-3 ${
+                            className={`ml-3 cursor-pointer ${
                               isCorrect && "text-green-700 font-bold"
                             } ${isIncorrect && "text-red-700 font-bold"}`}
                           >
@@ -114,6 +166,7 @@ const QuizPage = () => {
                 <button
                   className="btn bg-rose-500 text-base-200 mt-4"
                   type="submit"
+                  disabled={hasSubmitted}
                 >
                   Submit Quiz
                 </button>
