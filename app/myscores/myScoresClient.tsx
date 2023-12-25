@@ -4,9 +4,12 @@ import Container from "./../Components/Common/Container";
 import { useAppSelector } from "../Hooks/useRedux";
 import { useGetUserScoreQuery } from "@/redux/Services/authService";
 import Spinner from "../Components/Common/Spinner";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 const MyScoresClient = () => {
   const auth = useAppSelector((state) => state.auth);
+  const router = useRouter();
   const {
     data: userScoreData,
     isLoading,
@@ -16,6 +19,11 @@ const MyScoresClient = () => {
   useEffect(() => {
     refetch();
   }, [refetch]);
+
+  if (!auth?.user?.email && !auth?.user?.id) {
+    toast.error("You must log in!")
+    router.push("/login");
+  }
 
   if (isLoading) {
     return <Spinner></Spinner>;

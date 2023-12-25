@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useCallback, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useGetQuizByIdQuery } from "@/redux/Services/quizService";
 import Container from "@/app/Components/Common/Container";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
@@ -17,7 +17,7 @@ const QuizPage = () => {
   const { user }: any = useAppSelector((state) => state.auth);
   const [showScore, setShowScore] = useState<boolean>(false);
   const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
-
+  const router = useRouter();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [answeredQuestions, setAnsweredQuestions] = useState<FieldValues>({});
   const [correctAnswer, setCorrectAnswer] = useState<boolean>(false);
@@ -107,6 +107,11 @@ const QuizPage = () => {
       calculateScore();
     }
   }, [answeredQuestions, calculateScore]);
+  if (!user?.email && !user?.id) {
+    toast.error("You must log in!");
+    router.push("/login");
+
+  }
   return (
     <div>
       {isLoading ? (

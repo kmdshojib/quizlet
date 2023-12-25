@@ -3,9 +3,14 @@ import React, { useEffect } from "react";
 import Container from "../Components/Common/Container";
 import { useGetAllUserSCoreQuery } from "@/redux/Services/authService";
 import Spinner from "../Components/Common/Spinner";
+import { useAppSelector } from "../Hooks/useRedux";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 const LeaderBoardClient: React.FC = () => {
   const { data, isLoading, refetch } = useGetAllUserSCoreQuery(null);
+  const { user }: any = useAppSelector((state) => state.auth);
+  const router = useRouter();
 
   const calculateAverage = (scores: any) => {
     const totalScore = scores.reduce((sum: any, score: any) => {
@@ -25,6 +30,10 @@ const LeaderBoardClient: React.FC = () => {
     refetch();
   }, [refetch]);
 
+  if (!user?.email && !user?.id) {
+    toast.error("You must log in!");
+    router.push("/login");
+  }
   if (isLoading) {
     return <Spinner />;
   }
