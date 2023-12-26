@@ -48,7 +48,7 @@ const MobileMenu: React.FC = () => {
                 Dashboard
               </Link>
             )}
-            {auth.user ? (
+            {auth?.user?.id && auth?.user?.email  ? (
               <>
                 <Link
                   className="hover:text-rose-500 cursor-pointer mr-3 mb-3"
